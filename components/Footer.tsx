@@ -46,14 +46,13 @@ export const Footer=()=>{
       </Col>
       </Row>
     </Toast.Body>
-    </Toast>:<Row className={styles.footer} onClick={()=>setShow(true)} >
+    </Toast>:<footer className={styles.footer} onClick={()=>setShow(true)} >
       <Col className={styles.footercol}>© 2023 Airbnb, Inc.</Col>
       <Col className={styles.footercol}>Terms</Col>
       <Col className={styles.footercol}>Sitemap</Col>
       <Col className={styles.footercol}>Privacy</Col>
       <Col className={styles.footercol}>Your Privacy Choices</Col>
       <Col className={styles.footercol}>Support & resources <KeyboardArrowUpIcon/></Col>
-    </Row>}
-    
+    </footer>}
     </>)
 }

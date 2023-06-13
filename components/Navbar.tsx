@@ -1,19 +1,22 @@
 import { Col, Container, Navbar, Dropdown, Row, Form, Button, Card} from "react-bootstrap"
 import Image from "next/image"
-import logo from "../public/airbnb.png"
-import LanguageIcon from '@mui/icons-material/Language';
+import booking from "../public/images/booking.png"
 import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SearchIcon from '@mui/icons-material/Search';
 import styles from "../app/page.module.css"
 import Link from "next/link";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { DateRange } from 'react-date-range'
 import 'react-date-range/dist/styles.css'; 
 import 'react-date-range/dist/theme/default.css';
 import { add } from 'date-fns'
-import { SearchInfo } from "./types";
-
+import { useRouter, useSearchParams } from "next/navigation";
+import { useAuthContext } from "@/context/AuthContext";
+import { signOut } from "firebase/auth";
+import { auth } from "@/firebase/firebase";
+import { SearchForm } from "./Searchform";
+import { differenceInDays } from "date-fns";
 
 const checkout = add(new Date(), { days: 7, })
 
@@ -21,7 +24,7 @@ export const Navbarpart=()=>{
   const [info,setInfo]=useState(false)
   const [search,setSearch]=useState("")
   const [selectGuest,setSelectGuest]=useState(false)
-  const [guest,setGuest]=useState<number>(0)
+  const [guest,setGuest]=useState<number>(2)
   const [guestChild,setGuestChild]=useState<number>(0)
   const [startDate,setStartDate]=useState(new Date())
   const [endDate,setEndDate]=useState(checkout)
@@ -31,55 +34,81 @@ export const Navbarpart=()=>{
     endDate:endDate,
     key:"selection"
   }
-  const [searchInfo,setSearchInfo]=useState<SearchInfo>({
-    location:search,
-    startDate:startDate,
-    endDate:endDate,
-    adult:guest,
-    child:guestChild
-  })
+  const[width,setWidth]=useState<number>(window.innerWidth)
+
+  useEffect(()=>{
+    window.addEventListener("resize",()=>setWidth(window.innerWidth))
+  }
+  ,[width])
+  const user=useAuthContext()
+  const router = useRouter();
+  const searchParams= useSearchParams();
   const startMonth=String(startDate).split(" ")[1]
   const startDay=String(startDate).split(" ")[2]
   const endMonth=String(endDate).split(" ")[1]
   const endDay=String(endDate).split(" ")[2]
-
-  function handleSelect(ranges:any) {
+  const nigths=differenceInDays(new Date(endDate),new Date(startDate))
+  const handleSelect=(ranges:any)=>{
     setStartDate(ranges.selection.startDate);
     setEndDate(ranges.selection.endDate);
   }
- 
+  const onSearch=(e:any)=>{
+    e.preventDefault()
+    const current=new URLSearchParams(searchParams.toString())
+    current.set("location",search)
+    current.set("startDate",startDate.toISOString())
+    current.set("endDate",endDate.toISOString())
+    current.set("adults",guest.toString())
+    current.set("children",guestChild.toString())
+    const searching=current.toString()
+    const query=searching ? `?${searching}` :""
+    router.push(`/search${query}`)
+  }
+const onReservation=(e:any)=>{
+  e.preventDefault()
+  router.push(`/reservations?${user.user.uid}`)
+}
+const onSignout=()=>{
+  signOut(auth)
+  localStorage.setItem("user","")
+}
+
   return (<>
     <Navbar>
       <Container>
-      <Col className={styles.navbarlogo}>
-      <Link href="/"><Image src={logo} alt="" width={100} height={35} priority/></Link>
+      <Col>
+      <Link href="/admin"><Image className="mt-2" src={booking} alt="" width={60} height={43} priority/></Link>
       </Col>
-      <Col className={styles.navbarsearch} onClick={()=>setInfo(!info)}>
+      <Col onClick={()=>{
+        setInfo(!info)
+        setSelectDate(false)
+        setSelectGuest(false)}} className={styles.navbarsearch}>
         <Col className={styles.searchinfo}>
-          <Col>Anywhere</Col>
-          <Col>Anyweek</Col>
-          <Col>Add guests</Col>
-        </Col>
-        <Col xs={2} >
-          <Button className={styles.searchicon}><SearchIcon/></Button></Col>
+          <Col>Where</Col>
+          <Col>Week</Col>
+          <Col>Guests</Col>
+          </Col>
+        {width>600 && <Col xs={2} >
+          <Button className={styles.searchicon}><SearchIcon/></Button></Col>}
       </Col>
       <Col className={styles.navbarsetting}>
-      <Col className={styles.settinghome}>Airbnb your home</Col>
-      <LanguageIcon className={styles.language}/>
       <Dropdown>
         <Dropdown.Toggle className={styles.navbaraccount}>
         <MenuIcon/>
         <AccountCircleIcon/>
         </Dropdown.Toggle>
-      <Dropdown.Menu>
+        {user.user.uid !=="" ? <Dropdown.Menu>
+        <Dropdown.Item href="/" onClick={onSignout}>Sign out</Dropdown.Item>
+        <Dropdown.Item href="/" onClick={onReservation}>Reservations</Dropdown.Item></Dropdown.Menu> :<Dropdown.Menu>
         <Dropdown.Item href="/login">Login</Dropdown.Item>
         <Dropdown.Item href="/signup">Sign up</Dropdown.Item>
-      </Dropdown.Menu></Dropdown>
+      </Dropdown.Menu>}
+      </Dropdown>
       </Col>
       </Container>
     </Navbar>
-    {info && <Row  >
-      <Col className={styles.searchbar} xs={{span: 6, offset: 3 }} >
+    {info && width >700 && <Row >
+      <Col className={styles.searchbar} xs={{span: 7, offset: 3 }} xl={{span: 6, offset: 4 }}>
     <Col className={styles.searchinfo}>
       <Form.Group>
         <Form.Label>Where</Form.Label>
@@ -103,11 +132,49 @@ export const Navbarpart=()=>{
         setSelectDate(false)
         setSelectGuest(!selectGuest)}}>Add guests</p>
       <Col>
-        <Button className={styles.searchbaricon}><SearchIcon/>Search</Button></Col>
+        <Button className={styles.searchbaricon} onClick={onSearch}><SearchIcon/>Search</Button></Col>
       </Col>
       </Col>
     </Row>}
-    {info && selectDate && <Col xs={{ span: 3, offset: 5 }} md={{span: 2, offset: 4 }}>
+    {info && width >400 && width<700 && <Row >
+      <Col className="d-flex">
+    <Col className={styles.searchinfo}>
+      <Form.Group>
+        <Form.Label>Where</Form.Label>
+        < Form.Control placeholder="Search destinations" type="text" style={{fontSize:"14px"}} value={search} onChange={(e)=>setSearch(e.target.value)}/>
+      </Form.Group>
+      </Col>
+      <Col onClick={()=>{
+        setSelectDate(!selectDate)
+        setSelectGuest(false)}}>
+      <h6>Check in</h6>
+      <p>{startMonth} {startDay}</p>
+      </Col>
+      <Col onClick={()=>{
+        setSelectDate(!selectDate)
+        setSelectGuest(false)}}>
+      <h6>Check out</h6>
+      <p>{endMonth} {endDay}</p>
+      </Col>
+      <Col className={styles.addguest} >
+      <p onClick={()=>{
+        setSelectDate(false)
+        setSelectGuest(!selectGuest)}}>Add guests</p>
+      <Col>
+        <Button className={styles.searchbaricon} onClick={onSearch}><SearchIcon/>Search</Button></Col>
+      </Col>
+      </Col>
+    </Row> }
+    <hr/>
+    {info && width<400 && <SearchForm 
+    nigths={nigths}
+    startDate={startDate.toISOString()}
+    endDate={endDate.toISOString()}
+    adults={guest}
+    children={guestChild}
+    location={search!} 
+    results={[]}/>}
+    {info && selectDate && <Col className={styles.navbardaterange} xs={{ span: 3, offset: 5 }} md={{span: 2, offset: 4 }}>
       <DateRange 
       ranges={[selectRange]}
       minDate={new Date()}
@@ -116,18 +183,18 @@ export const Navbarpart=()=>{
       </Col>}
     {info && selectGuest && <Col xs={{ span: 3, offset: 7 }} md={{span: 2, offset: 6 }}>
     <Card>
-      <Row className={styles.guestrow}>
+      <Row>
+      <Card.Body className={styles.personcard}>
       <Card.Title>Adults</Card.Title>
-      <Card.Body>
         <Form.Control className={styles.guest} type="number" onChange={(e)=>setGuest(Number(e.target.value))} value={String(guest)}/>
       </Card.Body></Row>
       <hr/>
-      <Row className={styles.guestrow}><Card.Title>Children</Card.Title>
-      <Card.Body>
+      <Row>
+      <Card.Body className={styles.personcard}>
+      <Card.Title>Children</Card.Title>
         <Form.Control className={styles.guest} type="number" onChange={(e)=>setGuestChild(Number(e.target.value))} value={String(guestChild)}/>
       </Card.Body></Row>
     </Card>
     </Col>}
-    <hr/>
   </>)
 }
