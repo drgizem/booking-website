@@ -10,7 +10,7 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 - React Leaflet
 - React Date Range for check-in & check-out dates
   
-![](./booking1.png)
+![](./booking4.png)
 ![](./booking2.png)
 ![](./booking3.png)
 
