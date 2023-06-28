@@ -1,5 +1,19 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+## Technologies used and Features
+- Next.js
+- Typescript
+- Bootstrap
+- Firebase Authentication
+- -Firebase Database
+- Responsive web Design 
+- React Leaflet
+- React Date Range for check-in & check-out dates
+  
+![](./booking1.png)
+![](./booking2.png)
+![](./booking3.png)
+
 ## Getting Started
 
 First, run the development server:
