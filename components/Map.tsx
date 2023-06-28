@@ -1,7 +1,7 @@
+"use client"
 import { MapContainer, TileLayer,Marker,Popup,useMap } from 'react-leaflet'
 import { Hotel } from './types'
 import "leaflet/dist/leaflet.css"
-import L, { Icon } from "leaflet"
 import styles from "../app/page.module.css"
 
 
@@ -18,10 +18,6 @@ function ChangeMapView({ coords }:Prop) {
   return null;
 }
 export const Mappart=({results}:Props)=>{
-  const newicon = new L.Icon(
-   { iconUrl:"../public/images/istanbul.png",
-  }
-  )
 
   return (<>
     {results.length !==0 && <MapContainer className={styles.searchmap} style={{"height":"40vh"}}  center={[results[0]!.latitude,results[0]!.longitude]} zoom={13} scrollWheelZoom={false}>
@@ -30,7 +26,7 @@ export const Mappart=({results}:Props)=>{
       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
     />
     {results.map((item:Hotel)=>{
-      return <Marker key={item.name} position={[item.latitude,item.longitude]} icon={newicon} >
+      return <Marker key={item.name} position={[item.latitude,item.longitude]} >
       <Popup>
         {item.name}
       </Popup>

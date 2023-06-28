@@ -26,6 +26,7 @@ const user=useAuthContext()
     <Navpart />
     <Container>
       <Row className="mt-5">
+        <h1 className="mb-3">Your reservations</h1>
       {book.map((item:any)=>{
         return <Card className={styles.reservation} key={item.hotel}>
         <Card.Title>

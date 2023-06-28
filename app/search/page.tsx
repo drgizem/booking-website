@@ -13,7 +13,7 @@ import { collection,doc,getDocs, getDoc, setDoc } from "firebase/firestore";
 import { db } from "@/firebase/firebase";
 import styles from "../page.module.css"
 import { useAuthContext } from "@/context/AuthContext";
-
+import dynamic from "next/dynamic";
 
 
 export default function Search() {
