@@ -15,8 +15,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthContext } from "@/context/AuthContext";
 import { signOut } from "firebase/auth";
 import { auth } from "@/firebase/firebase";
-import { SearchForm } from "./Searchform";
-import { differenceInDays } from "date-fns";
+
 
 const checkout = add(new Date(), { days: 7, })
 
@@ -43,11 +42,12 @@ export const Navbarpart=()=>{
   const user=useAuthContext()
   const router = useRouter();
   const searchParams= useSearchParams();
+
   const startMonth=String(startDate).split(" ")[1]
   const startDay=String(startDate).split(" ")[2]
   const endMonth=String(endDate).split(" ")[1]
   const endDay=String(endDate).split(" ")[2]
-  const nigths=differenceInDays(new Date(endDate),new Date(startDate))
+
   const handleSelect=(ranges:any)=>{
     setStartDate(ranges.selection.startDate);
     setEndDate(ranges.selection.endDate);
@@ -136,7 +136,7 @@ const onSignout=()=>{
       </Col>
       </Col>
     </Row>}
-    {info && width >400 && width<700 && <Row >
+    {info && width<700 && <Row >
       <Col className="d-flex">
     <Col className={styles.searchinfo}>
       <Form.Group>
@@ -166,22 +166,14 @@ const onSignout=()=>{
       </Col>
     </Row> }
     <hr/>
-    {info && width<400 && <SearchForm 
-    nigths={nigths}
-    startDate={startDate.toISOString()}
-    endDate={endDate.toISOString()}
-    adults={guest}
-    children={guestChild}
-    location={search!} 
-    results={[]}/>}
-    {info && selectDate && <Col className={styles.navbardaterange} xs={{ span: 3, offset: 5 }} md={{span: 2, offset: 4 }}>
+    {info && selectDate && <Col className={styles.navbardaterange} xs={{ span: 3, offset: 1 }} md={{span: 2, offset: 4 }}>
       <DateRange 
       ranges={[selectRange]}
       minDate={new Date()}
       rangeColors={["#ff385c"]}
       onChange={handleSelect}/>
       </Col>}
-    {info && selectGuest && <Col xs={{ span: 3, offset: 7 }} md={{span: 2, offset: 6 }}>
+    {info && selectGuest && <Col xs={{ span: 5, offset: 6 }} md={{span: 4, offset: 5 }}>
     <Card>
       <Row>
       <Card.Body className={styles.personcard}>

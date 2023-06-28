@@ -29,10 +29,12 @@ export default function Search() {
   const [results,setResults]=useState<Hotel[]>([])
   
  const nigths=differenceInDays(new Date(current.get("endDate")!),new Date(current.get("startDate")!))
- useEffect(() => {
-  //This code is executed in the browser
-  console.log(window.innerWidth)
-}, [])
+ const[width,setWidth]=useState<number>(window.innerWidth)
+
+ useEffect(()=>{
+   window.addEventListener("resize",()=>setWidth(window.innerWidth))
+ }
+ ,[width])
   useEffect(()=>{
     const uploadPage=async()=>{
       let cache:Hotel[]=[]
@@ -76,11 +78,10 @@ const handleBook=async(hotel:Hotel)=>{
     router.push("/signup") 
   }
 }
-
     return (<>
       <Navpart />
       <hr/>
-      <Container>
+      {width >700 ? <Container>
         <Row className="mb-3">
         {children===0 ? <h3>{nigths} nights in {location} - {adults} adults</h3> : <h3>{nigths} nights in {location} - {adults} adults and {children} children</h3>}
         </Row>
@@ -116,7 +117,39 @@ const handleBook=async(hotel:Hotel)=>{
         }
         </Col>
         </Row>
-      </Container>
+      </Container> :
+      <Container>
+      <Row className="mb-3">
+      {children===0 ? <h3>{nigths} nights in {location} - {adults} adults</h3> : <h3>{nigths} nights in {location} - {adults} adults and {children} children</h3>}
+      </Row>
+      <Row className={styles.searchrow}>
+          <SearchForm 
+        nigths={nigths}
+        startDate={startDate!}
+        endDate={endDate!}
+        adults={adults}
+        children={children}
+        location={location!}
+        results={results}/></Row>
+        <Row className="mt-5">
+        {results.map((item:Hotel)=>{
+        return <SearchCard 
+        key={item.id}
+        title={item.name}
+        image={item.image}
+        price={item.price}
+        nigths={nigths}
+        city={item.city}
+        distance={item.distance}
+        adults={adults}
+        children={children}
+        handleBook={handleBook}
+        item={item}
+        />
+      })
+      }
+      </Row>
+    </Container> }
       </> )
   }
   

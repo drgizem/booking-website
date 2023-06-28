@@ -1,7 +1,6 @@
 import { Button, Card,Row,Col } from "react-bootstrap"
 import styles from "../app/page.module.css"
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
-import { useRouter, useSearchParams } from "next/navigation";
 import { Hotel } from "./types";
 
 type Props={
@@ -18,7 +17,6 @@ type Props={
 }
 export const SearchCard=({image,title,price,city,distance,nigths,adults,children,handleBook,item}:Props)=>{
 
-
   return (
     <Card className="mb-2 p-4">
       <Row>
@@ -31,7 +29,8 @@ export const SearchCard=({image,title,price,city,distance,nigths,adults,children
         <Col className={styles.cardpricepart}>
         {children !==0 ? <Card.Text className={styles.cardnigths}>{nigths} nights, {adults} adults-{children} children</Card.Text> :
         <Card.Text className={styles.cardnigths}>{nigths} nights, {adults} adults</Card.Text>}
-        <Card.Text className={styles.cardprice}>${price}/night</Card.Text>
+        <Card.Text className={styles.cardprice}><strong>${price}</strong>/night</Card.Text>
+        <Card.Text className={styles.cardtotalprice}>Total: ${price*nigths}</Card.Text>
       <Button className={styles.cardbtn} onClick={()=>handleBook(item)}>Book this hotel</Button></Col>
       </Row>
     </Card>

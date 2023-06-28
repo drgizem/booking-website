@@ -22,7 +22,6 @@ export default function Page(){
   const router=useRouter()
 
   useEffect(() => {
-    //This code is executed in the browser
     console.log(window.innerWidth)
   }, [])
   const handleChange=(e:any)=>{

@@ -131,6 +131,11 @@
   position:absolute;
   bottom:55px;
   right: 0px;
+}
+.cardtotalprice{
+  position:absolute;
+  bottom:30px;
+  right: 0px;
   font-weight: 700;
 }
 .cardnigths{
@@ -145,6 +150,8 @@
   background-color: #FF5A5F;
   color: white;
   border:none;
+  max-height: 40px;
+  max-width: 500px;
 }
 .cardinfo >p{
   text-decoration: underline;
@@ -152,6 +159,7 @@
 .daterange{
   z-index:2;
   position:absolute;
+  
 }
 .navbardaterange{
   z-index: 1;
@@ -179,6 +187,9 @@
 .searchformpart{
   display: flex;
   flex-direction: column;
+}
+.searchrow{
+  margin-bottom: 5%;
 }
 .signupform{
   margin-left: 20%;

@@ -20,7 +20,6 @@ export default function RootLayout({
 }) {
 
   useEffect(() => {
-    //This code is executed in the browser
     console.log(window.innerWidth)
 }, [])
   return (
